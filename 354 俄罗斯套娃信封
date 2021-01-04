@@ -1,0 +1,52 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+typedef struct t{
+    int len,high;
+}t;
+class compare{
+    public:
+    bool operator()(t a,t b){
+        if(a.len!=b.len)return a.len<b.len;
+        else return a.high<b.high;
+    }
+};
+class compare1{
+    public:
+    bool operator()(t a,t b){
+        if(a.high!=b.high)return a.high<b.high;
+        else return a.len<b.len;
+    }
+};
+int dfs(vector<t> &a,vector<t> &b,int astart,int bstart,int len,int high,int count){
+    while(astart<a.size()&&(a[astart].len<len||a[astart].high<high)){
+        astart++;
+    }
+    while(bstart<b.size()&&(b[bstart].len<len||b[bstart].high<high)){
+        bstart++;
+    }
+    int res1,res2;
+    if(astart!=a.size())res1=dfs(a,b,astart+1,bstart,a[astart].len,a[astart].high,count+1);
+    else res1=count;
+    if(bstart!=b.size())res2=dfs(a,b,astart,bstart+1,b[astart].len,b[astart].high,count+1);
+    else res2=count;
+    return res1>res2?res1:res2;
+}
+
+int main() {
+    int n;
+    cin>>n;
+    vector<t> m(n),tmp;
+    for(int i=0;i<n;i++)cin>>m[i].len>>m[i].high;
+    for(t tmp:m){
+        cout<<tmp.len<<" "<<tmp.high<<" ";
+    }
+    cout<<endl;
+    tmp.assign(m.begin(),m.end());
+    sort(m.begin(),m.end(),compare());
+    sort(tmp.begin(),tmp.end(),compare1());
+    int res = dfs(m,tmp,0,0,0,0,0);
+    cout<<res/2;
+    return 0;
+}
